@@ -1,0 +1,39 @@
+@(todos: Seq[Todo], form: Form[TodoForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+
+    @main("Todos") { 
+        <h1>Add Todo</h1>
+        <div> 
+            @helper.form(postUrl) { 
+                @helper.CSRF.formField
+                @helper.inputText(form("name"))
+                @helper.inputText(form("description"))
+                <button>Add todo</button>
+            } 
+        <div> 
+
+        <h1>Todos</h1> 
+        <div> 
+            @request.flash.data.map{ case (name, value) => 
+                <div>@name: @value</div>
+            } 
+
+            <div> 
+                <ol>
+                    @for(todo <- todos) { 
+                        <li>
+                            <b>@todo.name</b><br /> 
+                            <p>@todo.description</p>
+                        </li> 
+                    }
+                </ol>
+            </div>   
+
+            @if(form.hasGlobalErrors) { 
+                @form.globalErrors.map { error: FormError => 
+                    <div>
+                        @error.key: @error.message
+                    </div> 
+                }
+            }
+        </div> 
+    }
